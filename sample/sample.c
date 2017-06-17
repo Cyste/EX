@@ -1,5 +1,3 @@
-#include <vld.h>
-
 #include <ex.h>
 
 #include <math.h>
