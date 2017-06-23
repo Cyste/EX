@@ -20,36 +20,36 @@
 #define EX_MATERIAL_ALPHA     (1 << 1)
 #define EX_MATERIAL_WIREFRAME (1 << 2)
 
-typedef struct ex_material ex_material;
+typedef struct ex_material_t ex_material_t;
 
-ex_material* ex_material_create(ex_material* copy);
+EX_API ex_material_t* ex_material_create(ex_material_t* copy);
 
-void ex_material_destroy(ex_material* material);
+EX_API void ex_material_destroy(ex_material_t* material);
 
-void ex_material_set_diffuse(ex_material* material, float r, float g, float b);
+EX_API void ex_material_set_diffuse(ex_material_t* material, float r, float g, float b);
 
-void ex_material_get_diffuse(ex_material* material, ex_vec3* diffuse);
+EX_API void ex_material_get_diffuse(const ex_material_t* material, ex_vec3_t* diffuse);
 
-void ex_material_set_roughness(ex_material* material, float roughness);
+EX_API void ex_material_set_roughness(ex_material_t* material, float roughness);
 
-float ex_material_get_roughness(ex_material* material);
+EX_API float ex_material_get_roughness(const ex_material_t* material);
 
-void ex_material_set_metallic(ex_material* material, float metallic);
+EX_API void ex_material_set_metallic(ex_material_t* material, float metallic);
 
-float ex_material_get_metallic(ex_material* material);
+EX_API float ex_material_get_metallic(const ex_material_t* material);
 
-void ex_material_set_diffuse_map(ex_material* material, ex_texture* diffuse_map);
+EX_API void ex_material_set_diffuse_map(ex_material_t* material, ex_texture_t* diffuse_map);
 
-ex_texture* ex_material_get_diffuse_map(ex_material* material);
+EX_API ex_texture_t* ex_material_get_diffuse_map(const ex_material_t* material);
 
-void ex_material_set_normal_map(ex_material* material, ex_texture* normal_map);
+EX_API void ex_material_set_normal_map(ex_material_t* material, ex_texture_t* normal_map);
 
-ex_texture* ex_material_get_normal_map(ex_material* material);
+EX_API ex_texture_t* ex_material_get_normal_map(const ex_material_t* material);
 
-void ex_material_remove_properties(ex_material* material, unsigned int flags);
+EX_API void ex_material_remove_properties(ex_material_t* material, unsigned int flags);
 
-void ex_material_add_properties(ex_material* material, unsigned int flags);
+EX_API void ex_material_add_properties(ex_material_t* material, unsigned int flags);
 
-unsigned int ex_material_get_properties(ex_material* material);
+EX_API unsigned int ex_material_get_properties(const ex_material_t* material);
 
 #endif

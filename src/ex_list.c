@@ -13,25 +13,28 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-#ifndef EX_CONTEXT_H_
-#define EX_CONTEXT_H_
+#include <ex.h>
 
-#define EX_INTERVAL_NONE           (0)
-#define EX_INTERVAL_VSYNC          (1)
-#define EX_INTERVAL_ADAPTIVE_VSYNC (-1)
+void enet_list_clear(ex_list* list) {
+	list->sentinel.next = &list->sentinel;
+	list->sentinel.prev = &list->sentinel;
+}
 
-typedef struct ex_context_t ex_context_t;
+ex_list_node* ex_list_insert(ex_list_node* list_node, void* object) {
+	ex_list_node* result = (ex_list_node*)object;
 
-EX_API ex_context_t* ex_context_create(ex_window_t* window);
+	result->prev = list_node->prev;
+	result->next = list_node;
 
-EX_API int ex_context_interval(ex_context_t* context, int interval);
+	result->prev->next = result;
+	list_node->prev = result;
 
-EX_API int ex_context_swap(ex_context_t* context);
+	return result;
+}
 
-EX_API int ex_context_make_current(ex_context_t* context);
+void* ex_list_remove(ex_list_node* list_node) {
+	list_node->prev->next = list_node->next;
+	list_node->next->prev = list_node->prev;
 
-EX_API int ex_context_is_current(ex_context_t* context);
-
-EX_API void ex_context_destroy(ex_context_t* context);
-
-#endif
+	return list_node;
+}

@@ -20,35 +20,43 @@
 #define GLEW_STATIC
 #include "gl/glew.h"
 
-typedef struct ex_light_buffer {
+typedef struct ex_light_buffer_t {
 	GLuint frame_buffer;
 
 	GLuint acc_texture;
-} ex_light_buffer;
+} ex_light_buffer_t;
 
-typedef struct ex_geometry_buffer {
+typedef struct ex_geometry_buffer_t {
 	GLuint frame_buffer;
 
 	GLuint diffuse_texture;
 	GLuint normals_texture;
 	GLuint depth_texture;
-} ex_geometry_buffer;
+} ex_geometry_buffer_t;
 
-struct ex_screen {
-	ex_geometry_buffer geometry_buffer;
-	ex_light_buffer light_buffer;
+struct ex_screen_t {
+	int viewport_width;
+	int viewport_height;
+
+	int width;
+	int height;
+
+	ex_geometry_buffer_t geometry_buffer;
+	ex_light_buffer_t    light_buffer;
+
+	unsigned int flags;
 };
 
 static
-int init_light_buffer(ex_light_buffer* light_buffer, int width, int height, unsigned int flags) {
+void init_light_buffer(ex_light_buffer_t* light_buffer, int width, int height, unsigned int flags) {
 	glGenFramebuffers(1, &light_buffer->frame_buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, light_buffer->frame_buffer);
 
 	glGenTextures(1, &light_buffer->acc_texture);
 	glBindTexture(GL_TEXTURE_2D, light_buffer->acc_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, (flags & EX_RENDERER_HDR) ? GL_RGBA16F : GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (flags & EX_RENDERER_SUPERSAMPLING) ? GL_LINEAR : GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (flags & EX_RENDERER_SUPERSAMPLING) ? GL_LINEAR : GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, light_buffer->acc_texture, 0);
@@ -56,25 +64,21 @@ int init_light_buffer(ex_light_buffer* light_buffer, int width, int height, unsi
 	GLenum draw_buffer = GL_COLOR_ATTACHMENT0;
 	glDrawBuffers(1, &draw_buffer);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		return 0;
-	}
+	ex_assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	return 1;
 }
 
 static
-int init_geometry_buffer(ex_geometry_buffer* geometry_buffer, int width, int height, unsigned int flags) {
+void init_geometry_buffer(ex_geometry_buffer_t* geometry_buffer, int width, int height, unsigned int flags) {
 	glGenFramebuffers(1, &geometry_buffer->frame_buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, geometry_buffer->frame_buffer);
 
 	glGenTextures(1, &geometry_buffer->diffuse_texture);
 	glBindTexture(GL_TEXTURE_2D, geometry_buffer->diffuse_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, (flags & EX_RENDERER_HDR) ? GL_RGBA16F : GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (flags & EX_RENDERER_SUPERSAMPLING) ? GL_LINEAR : GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (flags & EX_RENDERER_SUPERSAMPLING) ? GL_LINEAR : GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, geometry_buffer->diffuse_texture, 0);
@@ -90,7 +94,7 @@ int init_geometry_buffer(ex_geometry_buffer* geometry_buffer, int width, int hei
 
 	glGenTextures(1, &geometry_buffer->depth_texture);
 	glBindTexture(GL_TEXTURE_2D, geometry_buffer->depth_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -100,25 +104,22 @@ int init_geometry_buffer(ex_geometry_buffer* geometry_buffer, int width, int hei
 	GLenum draw_buffers[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glDrawBuffers(2, draw_buffers);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		return 0;
-	}
+	ex_assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	return 1;
 }
 
-ex_screen* ex_screen_create(int width, int height, unsigned int flags) {
-	ex_screen* screen = (ex_screen*)malloc(sizeof(ex_screen));
+ex_screen_t* ex_screen_create(int width, int height, unsigned int flags) {
+	ex_screen_t* screen = (ex_screen_t*)ex_calloc(sizeof(ex_screen_t), 1);
 
-	init_geometry_buffer(&screen->geometry_buffer, width, height, flags);
-	init_light_buffer(&screen->light_buffer, width, height, flags);
+	screen->flags = flags;
+
+	ex_screen_resize(screen, width, height);
 
 	return screen;
 }
 
-void ex_screen_destroy(ex_screen* screen) {
+void ex_screen_destroy(ex_screen_t* screen) {
 	glDeleteFramebuffers(1, &screen->geometry_buffer.frame_buffer);
 	glDeleteFramebuffers(1, &screen->light_buffer.frame_buffer);
 
@@ -128,35 +129,82 @@ void ex_screen_destroy(ex_screen* screen) {
 
 	glDeleteTextures(1, &screen->light_buffer.acc_texture);
 
-	free(screen);
+	ex_free(screen);
 }
 
-void ex_screen_bind_geometry_buffer(ex_screen* screen) {
+void ex_screen_resize(ex_screen_t* screen, int width, int height) {
+	glDeleteFramebuffers(1, &screen->geometry_buffer.frame_buffer);
+	glDeleteFramebuffers(1, &screen->light_buffer.frame_buffer);
+
+	glDeleteTextures(1, &screen->geometry_buffer.diffuse_texture);
+	glDeleteTextures(1, &screen->geometry_buffer.normals_texture);
+	glDeleteTextures(1, &screen->geometry_buffer.depth_texture);
+
+	glDeleteTextures(1, &screen->light_buffer.acc_texture);
+
+	screen->viewport_width = width;
+	screen->viewport_height = height;
+
+	screen->width = width;
+	screen->height = height;
+
+	if (screen->flags & EX_RENDERER_SUPERSAMPLING) {
+		screen->width  <<= 1;
+		screen->height <<= 1;
+	} else if (screen->flags & EX_RENDERER_DOWNSAMPLING) {
+		screen->width  >>= 1;
+		screen->height >>= 1;
+	}
+
+	init_geometry_buffer(&screen->geometry_buffer, screen->width, screen->height, screen->flags);
+	init_light_buffer(&screen->light_buffer, screen->width, screen->height, screen->flags);
+}
+
+void ex_screen_bind_geometry_buffer(ex_screen_t* screen) {
 	glBindFramebuffer(GL_FRAMEBUFFER, screen->geometry_buffer.frame_buffer);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glViewport(0, 0, screen->width, screen->height);
 }
 
-void ex_screen_bind_light_buffer(ex_screen* screen) {
+void ex_screen_bind_light_buffer(ex_screen_t* screen) {
 	glBindFramebuffer(GL_FRAMEBUFFER, screen->light_buffer.frame_buffer);
+
+	glViewport(0, 0, screen->width, screen->height);
 }
 
-void ex_screen_send_to_light_pass(ex_screen* screen, ex_shader* shader) {
+void ex_screen_send_to_light_pass(ex_screen_t* screen, ex_shader_t* point, ex_shader_t* directional) {
+	ex_shader_use(point);
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, screen->geometry_buffer.diffuse_texture);
-	glUniform1i(ex_shader_get_uniform(shader, "color_map"), 1);
+	glUniform1i(ex_shader_get_uniform(point, "color_map"), 1);
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, screen->geometry_buffer.normals_texture);
-	glUniform1i(ex_shader_get_uniform(shader, "normal_map"), 2);
+	glUniform1i(ex_shader_get_uniform(point, "normal_map"), 2);
 
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, screen->geometry_buffer.depth_texture);
-	glUniform1i(ex_shader_get_uniform(shader, "depth_map"), 3);
+	glUniform1i(ex_shader_get_uniform(point, "depth_map"), 3);
+	
+	ex_shader_use(directional);
+
+	//glActiveTexture(GL_TEXTURE4);
+	//glBindTexture(GL_TEXTURE_2D, screen->geometry_buffer.diffuse_texture);
+	glUniform1i(ex_shader_get_uniform(directional, "color_map"), 1);
+
+	//glActiveTexture(GL_TEXTURE5);
+	//glBindTexture(GL_TEXTURE_2D, screen->geometry_buffer.normals_texture);
+	glUniform1i(ex_shader_get_uniform(directional, "normal_map"), 2);
+
 }
 
-void ex_screen_send_to_present(ex_screen* screen, ex_shader* shader) {
+void ex_screen_send_to_present(ex_screen_t* screen, ex_shader_t* shader) {
+	glViewport(0, 0, screen->viewport_width, screen->viewport_height);
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, screen->geometry_buffer.diffuse_texture);
 	glUniform1i(ex_shader_get_uniform(shader, "color_map"), 1);

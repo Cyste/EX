@@ -16,20 +16,20 @@
 #ifndef EX_TEXTURE_H_
 #define EX_TEXTURE_H_
 
-typedef struct ex_texture ex_texture;
+typedef struct ex_texture_t ex_texture_t;
 
-ex_texture* ex_texture_create(void* data, int width, int height, int components);
+EX_API ex_texture_t* ex_texture_create(void* data, int width, int height, int components);
 
-ex_texture* ex_texture_load(const char* file_name);
+EX_API ex_texture_t* ex_texture_load(const char* file_name);
 
-void ex_texture_destroy(ex_texture* texture);
+EX_API void ex_texture_destroy(ex_texture_t* texture);
 
-void ex_texture_generate_mipmaps(ex_texture* texture);
+EX_API void ex_texture_generate_mipmaps(ex_texture_t* texture);
 
-unsigned int ex_texture_get_id(ex_texture* texture);
+EX_API unsigned int ex_texture_get_id(ex_texture_t* texture);
 
-int ex_texture_get_width(ex_texture* texture);
+EX_API int ex_texture_get_width(ex_texture_t* texture);
 
-int ex_texture_get_height(ex_texture* texture);
+EX_API int ex_texture_get_height(ex_texture_t* texture);
 
 #endif

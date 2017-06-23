@@ -16,45 +16,45 @@
 #ifndef EX_VECTOR4_H_
 #define EX_VECTOR4_H_
 
-typedef struct ex_vec4 {
+typedef struct ex_vec4_t {
 	float x;
 	float y;
 	float z;
 	float w;
-} ex_vec4;
+} ex_vec4_t;
 
-void ex_vec4_assign(ex_vec4* out, float x, float y, float z, float w);
+EX_API void ex_vec4_assign(ex_vec4_t* out, float x, float y, float z, float w);
 
-void ex_vec4_assign_vec3(ex_vec4* out, ex_vec3* v, float w);
+EX_API void ex_vec4_assign_vec3(ex_vec4_t* out, ex_vec3_t* v, float w);
 
-void ex_vec4_neg(ex_vec4* out, ex_vec4* v);
+EX_API void ex_vec4_neg(ex_vec4_t* out, ex_vec4_t* v);
 
-void ex_vec4_add(ex_vec4* out, ex_vec4* a, ex_vec4* b);
+EX_API void ex_vec4_add(ex_vec4_t* out, ex_vec4_t* a, ex_vec4_t* b);
 
-void ex_vec4_subtract(ex_vec4* out, ex_vec4* a, ex_vec4* b);
+EX_API void ex_vec4_subtract(ex_vec4_t* out, ex_vec4_t* a, ex_vec4_t* b);
 
-void ex_vec4_multiply(ex_vec4* out, ex_vec4* a, ex_vec4* b);
+EX_API void ex_vec4_multiply(ex_vec4_t* out, ex_vec4_t* a, ex_vec4_t* b);
 
-void ex_vec4_divide(ex_vec4* out, ex_vec4* a, ex_vec4* b);
+EX_API void ex_vec4_divide(ex_vec4_t* out, ex_vec4_t* a, ex_vec4_t* b);
 
-void ex_vec4_add_scalar(ex_vec4* out, ex_vec4* a, float b);
+EX_API void ex_vec4_add_scalar(ex_vec4_t* out, ex_vec4_t* a, float b);
 
-void ex_vec4_subtract_scalar(ex_vec4* out, ex_vec4* a, float b);
+EX_API void ex_vec4_subtract_scalar(ex_vec4_t* out, ex_vec4_t* a, float b);
 
-void ex_vec4_multiply_scalar(ex_vec4* out, ex_vec4* a, float b);
+EX_API void ex_vec4_multiply_scalar(ex_vec4_t* out, ex_vec4_t* a, float b);
 
-void ex_vec4_divide_scalar(ex_vec4* out, ex_vec4* a, float b);
+EX_API void ex_vec4_divide_scalar(ex_vec4_t* out, ex_vec4_t* a, float b);
 
-float ex_vec4_length(ex_vec4* v);
+EX_API float ex_vec4_length(ex_vec4_t* v);
 
-void ex_vec4_normalize(ex_vec4* out, ex_vec4* v);
+EX_API void ex_vec4_normalize(ex_vec4_t* out, ex_vec4_t* v);
 
-void ex_vec4_direction(ex_vec4* out, ex_vec4* a, ex_vec4* b);
+EX_API void ex_vec4_direction(ex_vec4_t* out, ex_vec4_t* a, ex_vec4_t* b);
 
-float ex_vec4_distance(ex_vec4* a, ex_vec4* b);
+EX_API float ex_vec4_distance(ex_vec4_t* a, ex_vec4_t* b);
 
-float ex_vec4_dot(ex_vec4* a, ex_vec4* b);
+EX_API float ex_vec4_dot(ex_vec4_t* a, ex_vec4_t* b);
 
-void ex_vec4_cross(ex_vec4* out, ex_vec4* a, ex_vec4* b);
+EX_API void ex_vec4_cross(ex_vec4_t* out, ex_vec4_t* a, ex_vec4_t* b);
 
 #endif

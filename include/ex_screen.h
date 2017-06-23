@@ -16,18 +16,20 @@
 #ifndef EX_SCREEN_H_
 #define EX_SCREEN_H_
 
-typedef struct ex_screen ex_screen;
+typedef struct ex_screen_t ex_screen_t;
 
-ex_screen* ex_screen_create(int width, int height, unsigned int flags);
+EX_API ex_screen_t* ex_screen_create(int width, int height, unsigned int flags);
 
-void ex_screen_destroy(ex_screen* screen);
+EX_API void ex_screen_destroy(ex_screen_t* screen);
 
-void ex_screen_bind_geometry_buffer(ex_screen* screen);
+EX_API void ex_screen_resize(ex_screen_t* screen, int width, int height);
 
-void ex_screen_bind_light_buffer(ex_screen* screen);
+EX_API void ex_screen_bind_geometry_buffer(ex_screen_t* screen);
 
-void ex_screen_send_to_light_pass(ex_screen* screen, ex_shader* shader);
+EX_API void ex_screen_bind_light_buffer(ex_screen_t* screen);
 
-void ex_screen_send_to_present(ex_screen* screen, ex_shader* shader);
+EX_API void ex_screen_send_to_light_pass(ex_screen_t* screen, ex_shader_t* point, ex_shader_t* directional);
+
+EX_API void ex_screen_send_to_present(ex_screen_t* screen, ex_shader_t* shader);
 
 #endif

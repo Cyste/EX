@@ -16,43 +16,43 @@
 #ifndef EX_VECTOR3_H_
 #define EX_VECTOR3_H_
 
-typedef struct ex_vec3 {
+typedef struct ex_vec3_t {
 	float x;
 	float y;
 	float z;
-} ex_vec3;
+} ex_vec3_t;
 
-void ex_vec3_assign(ex_vec3* out, float x, float y, float z);
+EX_API void ex_vec3_assign(ex_vec3_t* out, float x, float y, float z);
 
-void ex_vec3_neg(ex_vec3* out, ex_vec3* v);
+EX_API void ex_vec3_neg(ex_vec3_t* out, ex_vec3_t* v);
 
-void ex_vec3_add(ex_vec3* out, ex_vec3* a, ex_vec3* b);
+EX_API void ex_vec3_add(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b);
 
-void ex_vec3_subtract(ex_vec3* out, ex_vec3* a, ex_vec3* b);
+EX_API void ex_vec3_subtract(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b);
 
-void ex_vec3_multiply(ex_vec3* out, ex_vec3* a, ex_vec3* b);
+EX_API void ex_vec3_multiply(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b);
 
-void ex_vec3_divide(ex_vec3* out, ex_vec3* a, ex_vec3* b);
+EX_API void ex_vec3_divide(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b);
 
-void ex_vec3_add_scalar(ex_vec3* out, ex_vec3* a, float b);
+EX_API void ex_vec3_add_scalar(ex_vec3_t* out, ex_vec3_t* a, float b);
 
-void ex_vec3_subtract_scalar(ex_vec3* out, ex_vec3* a, float b);
+EX_API void ex_vec3_subtract_scalar(ex_vec3_t* out, ex_vec3_t* a, float b);
 
-void ex_vec3_multiply_scalar(ex_vec3* out, ex_vec3* a, float b);
+EX_API void ex_vec3_multiply_scalar(ex_vec3_t* out, ex_vec3_t* a, float b);
 
-void ex_vec3_divide_scalar(ex_vec3* out, ex_vec3* a, float b);
+EX_API void ex_vec3_divide_scalar(ex_vec3_t* out, ex_vec3_t* a, float b);
 
-float ex_vec3_length(ex_vec3* v);
+EX_API float ex_vec3_length(ex_vec3_t* v);
 
-void ex_vec3_normalize(ex_vec3* out, ex_vec3* v);
+EX_API void ex_vec3_normalize(ex_vec3_t* out, ex_vec3_t* v);
 
-void ex_vec3_direction(ex_vec3* out, ex_vec3* a, ex_vec3* b);
+EX_API void ex_vec3_direction(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b);
 
-float ex_vec3_distance(ex_vec3* a, ex_vec3* b);
+EX_API float ex_vec3_distance(ex_vec3_t* a, ex_vec3_t* b);
 
-float ex_vec3_dot(ex_vec3* a, ex_vec3* b);
+EX_API float ex_vec3_dot(ex_vec3_t* a, ex_vec3_t* b);
 
-void ex_vec3_cross(ex_vec3* out, ex_vec3* a, ex_vec3* b);
+EX_API void ex_vec3_cross(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b);
 
 
 #endif

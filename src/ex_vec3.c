@@ -17,71 +17,71 @@
 
 #include <math.h>
 
-void ex_vec3_assign(ex_vec3* out, float x, float y, float z) {
+void ex_vec3_assign(ex_vec3_t* out, float x, float y, float z) {
 	out->x = x;
 	out->y = y;
 	out->z = z;
 }
 
-void ex_vec3_neg(ex_vec3* out, ex_vec3* v) {
+void ex_vec3_neg(ex_vec3_t* out, ex_vec3_t* v) {
 	out->x = -v->x;
 	out->y = -v->y;
 	out->z = -v->z;
 }
 
-void ex_vec3_add(ex_vec3* out, ex_vec3* a, ex_vec3* b) {
+void ex_vec3_add(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b) {
 	out->x = a->x + b->x;
 	out->y = a->y + b->y;
 	out->z = a->z + b->z;
 }
 
-void ex_vec3_subtract(ex_vec3* out, ex_vec3* a, ex_vec3* b) {
+void ex_vec3_subtract(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b) {
 	out->x = a->x - b->x;
 	out->y = a->y - b->y;
 	out->z = a->z - b->z;
 }
 
-void ex_vec3_multiply(ex_vec3* out, ex_vec3* a, ex_vec3* b) {
+void ex_vec3_multiply(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b) {
 	out->x = a->x * b->x;
 	out->y = a->y * b->y;
 	out->z = a->z * b->z;
 }
 
-void ex_vec3_divide(ex_vec3* out, ex_vec3* a, ex_vec3* b) {
+void ex_vec3_divide(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b) {
 	out->x = a->x / b->x;
 	out->y = a->y / b->y;
 	out->z = a->z / b->z;
 }
 
-void ex_vec3_add_scalar(ex_vec3* out, ex_vec3* a, float b) {
+void ex_vec3_add_scalar(ex_vec3_t* out, ex_vec3_t* a, float b) {
 	out->x = a->x + b;
 	out->y = a->y + b;
 	out->z = a->z + b;
 }
 
-void ex_vec3_subtract_scalar(ex_vec3* out, ex_vec3* a, float b) {
+void ex_vec3_subtract_scalar(ex_vec3_t* out, ex_vec3_t* a, float b) {
 	out->x = a->x - b;
 	out->y = a->y - b;
 	out->z = a->z - b;
 }
 
-void ex_vec3_multiply_scalar(ex_vec3* out, ex_vec3* a, float b) {
+void ex_vec3_multiply_scalar(ex_vec3_t* out, ex_vec3_t* a, float b) {
 	out->x = a->x * b;
 	out->y = a->y * b;
 	out->z = a->z * b;
 }
 
-void ex_vec3_divide_scalar(ex_vec3* out, ex_vec3* a, float b) {
+void ex_vec3_divide_scalar(ex_vec3_t* out, ex_vec3_t* a, float b) {
 	out->x = a->x / b;
 	out->y = a->y / b;
 	out->z = a->z / b;
 }
 
-float ex_vec3_length(ex_vec3* v) {
+float ex_vec3_length(ex_vec3_t* v) {
 	return (float)sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
 }
 
-void ex_vec3_normalize(ex_vec3* out, ex_vec3* v) {
+void ex_vec3_normalize(ex_vec3_t* out, ex_vec3_t* v) {
 	float length = (float)1.0 / ex_vec3_length(v);
 
 	out->x = v->x * length;
@@ -89,22 +89,22 @@ void ex_vec3_normalize(ex_vec3* out, ex_vec3* v) {
 	out->z = v->z * length;
 }
 
-void ex_vec3_direction(ex_vec3* out, ex_vec3* a, ex_vec3* b) {
+void ex_vec3_direction(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b) {
 	ex_vec3_subtract(out, b, a);
 	ex_vec3_normalize(out, out);
 }
 
-float ex_vec3_distance(ex_vec3* a, ex_vec3* b) {
-	ex_vec3 out;
+float ex_vec3_distance(ex_vec3_t* a, ex_vec3_t* b) {
+	ex_vec3_t out;
 	ex_vec3_subtract(&out, b, a);
 	return ex_vec3_length(&out);
 }
 
-float ex_vec3_dot(ex_vec3* a, ex_vec3* b) {
+float ex_vec3_dot(ex_vec3_t* a, ex_vec3_t* b) {
 	return a->x * b->x + a->y * b->y + a->z * b->z;
 }
 
-void ex_vec3_cross(ex_vec3* out, ex_vec3* a, ex_vec3* b) {
+void ex_vec3_cross(ex_vec3_t* out, ex_vec3_t* a, ex_vec3_t* b) {
 	out->x = a->y * b->z - a->z * b->y;
 	out->y = a->z * b->x - a->x * b->z;
 	out->z = a->x * b->y - a->y * b->x;

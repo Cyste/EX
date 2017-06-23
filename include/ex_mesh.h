@@ -49,11 +49,11 @@
 #define EX_TOPOLOGY_TRIANGLE_STRIP 4
 #define EX_TOPOLOGY_TRIANGLE_FAN   5
 
-typedef unsigned short ex_vertex_element;
+typedef unsigned short ex_vertex_element_t;
 
-typedef struct ex_mesh ex_mesh;
+typedef struct ex_mesh_t ex_mesh_t;
 
-ex_mesh* ex_mesh_create(ex_vertex_element* elements, 
+EX_API ex_mesh_t* ex_mesh_create(ex_vertex_element_t* elements,
 	void* vertices, 
 	unsigned int vertex_count, 
 	void* indices, 
@@ -61,14 +61,14 @@ ex_mesh* ex_mesh_create(ex_vertex_element* elements,
 	int index_type, 
 	int topology);
 
-ex_mesh* ex_mesh_create_sphere(float radius, int slices, int stacks);
+EX_API ex_mesh_t* ex_mesh_create_sphere(float radius, int slices, int stacks);
 
-ex_mesh* ex_mesh_create_fullscreen_quad(void);
+EX_API ex_mesh_t* ex_mesh_create_fullscreen_quad(void);
 
-ex_mesh* ex_mesh_create_plane(float width, float height);
+EX_API ex_mesh_t* ex_mesh_create_plane(float width, float height);
 
-void ex_mesh_destroy(ex_mesh* mesh);
+EX_API void ex_mesh_destroy(ex_mesh_t* mesh);
 
-void ex_mesh_render(ex_mesh* mesh);
+EX_API void ex_mesh_render(const ex_mesh_t* mesh);
 
 #endif

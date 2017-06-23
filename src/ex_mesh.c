@@ -25,11 +25,11 @@
 #define EX_BUFFER_VERTEX 0
 #define EX_BUFFER_INDEX  1
 
-struct ex_mesh {
+struct ex_mesh_t {
 	GLuint id;
 	GLuint buffers[2];
 
-	ex_vertex_element* elements;
+	ex_vertex_element_t* elements;
 
 	unsigned int vertex_count;
 	unsigned int index_count;
@@ -82,7 +82,7 @@ unsigned int _index_type_sizes[] = {
 };
 
 static 
-unsigned int get_vertex_size(ex_vertex_element* elements) {
+unsigned int get_vertex_size(ex_vertex_element_t* elements) {
 	unsigned int vertex_size = 0;
 	int i;
 	for (i = 0; elements[i]; i++) {
@@ -92,7 +92,7 @@ unsigned int get_vertex_size(ex_vertex_element* elements) {
 }
 
 static 
-unsigned int get_vertex_element_size(ex_vertex_element element) {
+unsigned int get_vertex_element_size(ex_vertex_element_t element) {
 	unsigned int type = ((element & EX_VERTEX_TYPE_MASK) >> 8);
 	unsigned int i;
 	for (i = 0; i < sizeof(_vertex_element_sizes) / sizeof(_vertex_element_sizes[0]); i++) {
@@ -103,26 +103,30 @@ unsigned int get_vertex_element_size(ex_vertex_element element) {
 	return 0;
 }
 
-ex_mesh* ex_mesh_create(ex_vertex_element* elements,
+ex_mesh_t* ex_mesh_create(ex_vertex_element_t* elements,
 	void* vertices,
 	unsigned int vertex_count,
 	void* indices,
 	unsigned int index_count,
 	int index_type,
 	int topology) {
-	ex_mesh* mesh = (ex_mesh*)malloc(sizeof(ex_mesh));
+	ex_mesh_t* mesh = (ex_mesh_t*)ex_malloc(sizeof(ex_mesh_t));
 	unsigned int vertex_size = 0;
 	unsigned int element_count = 0;
 	int offset = 0;
 	int i;
+
+	ex_assert(elements && elements[0] != EX_VERTEX_NONE);
+	ex_assert(vertices && vertex_count > 0);
+	ex_assert(indices && index_count > 0);
 
 	for (i = 0; elements[i]; i++) {
 		vertex_size += get_vertex_element_size(elements[i]);
 		element_count++;
 	}
 
-	mesh->elements = (ex_vertex_element*)malloc((element_count + 1) * sizeof(ex_vertex_element));
-	memcpy(mesh->elements, elements, (element_count + 1) * sizeof(ex_vertex_element));
+	mesh->elements = (ex_vertex_element_t*)ex_malloc((element_count + 1) * sizeof(ex_vertex_element_t));
+	memcpy(mesh->elements, elements, (element_count + 1) * sizeof(ex_vertex_element_t));
 
 	mesh->vertex_count = vertex_count;
 	mesh->index_count = index_count;
@@ -151,8 +155,8 @@ ex_mesh* ex_mesh_create(ex_vertex_element* elements,
 	return mesh;
 }
 
-ex_mesh* ex_mesh_create_sphere(float radius, int slices, int stacks) {
-	ex_mesh* mesh;
+ex_mesh_t* ex_mesh_create_sphere(float radius, int slices, int stacks) {
+	ex_mesh_t* mesh;
 	float phi, theta;
 	float dphi = EX_PI / stacks;
 	float dtheta = (2.0f * EX_PI) / slices;
@@ -161,13 +165,16 @@ ex_mesh* ex_mesh_create_sphere(float radius, int slices, int stacks) {
 	GLuint* indices;
 	int k;
 
-	struct ex_vertex {
-		ex_vec3 position;
-		ex_vec3 normal;
-		ex_vec2 texcoord;
-	} *vertices = (struct ex_vertex*)malloc(sizeof(struct ex_vertex) * (slices + 1) * (stacks + 1));
+	ex_assert(slices > 0);
+	ex_assert(stacks > 0);
 
-	ex_vertex_element elements[] = {
+	struct ex_vertex {
+		ex_vec3_t position;
+		ex_vec3_t normal;
+		ex_vec2_t texcoord;
+	} *vertices = (struct ex_vertex*)ex_malloc(sizeof(struct ex_vertex) * (slices + 1) * (stacks + 1));
+
+	ex_vertex_element_t elements[] = {
 		EX_VERTEX(EX_VERTEX_POSITION, EX_VERTEX_FLOAT3),
 		EX_VERTEX(EX_VERTEX_NORMAL, EX_VERTEX_FLOAT3),
 		EX_VERTEX(EX_VERTEX_TEXCOORD, EX_VERTEX_FLOAT2),
@@ -192,7 +199,7 @@ ex_mesh* ex_mesh_create_sphere(float radius, int slices, int stacks) {
 		}
 	}
 
-	indices = (unsigned int*)malloc(sizeof(unsigned int) * (stacks * slices * 6));
+	indices = (unsigned int*)ex_malloc(sizeof(unsigned int) * (stacks * slices * 6));
 	index = 0;
 	k = slices + 1;
 
@@ -210,14 +217,14 @@ ex_mesh* ex_mesh_create_sphere(float radius, int slices, int stacks) {
 
 	mesh = ex_mesh_create(elements, vertices, (slices + 1) * (stacks + 1), indices, index, EX_INDEX_UINT32, EX_TOPOLOGY_TRIANGLES);
 
-	free(vertices);
-	free(indices);
+	ex_free(vertices);
+	ex_free(indices);
 
 	return mesh;
 }
 
-ex_mesh* ex_mesh_create_fullscreen_quad(void) {
-	ex_vec2 vertices[] = {
+ex_mesh_t* ex_mesh_create_fullscreen_quad(void) {
+	ex_vec2_t vertices[] = {
 		{ -1, 1 },
 		{ -1, -1 },
 		{ 1, -1 },
@@ -229,7 +236,7 @@ ex_mesh* ex_mesh_create_fullscreen_quad(void) {
 		2, 3, 0
 	};
 
-	ex_vertex_element elements[] = {
+	ex_vertex_element_t elements[] = {
 		EX_VERTEX(EX_VERTEX_POSITION, EX_VERTEX_FLOAT2),
 		EX_VERTEX_NONE
 	};
@@ -237,19 +244,19 @@ ex_mesh* ex_mesh_create_fullscreen_quad(void) {
 	return ex_mesh_create(elements, vertices, 4, indices, 6, EX_INDEX_UINT8, EX_TOPOLOGY_TRIANGLES);
 }
 
-ex_mesh* ex_mesh_create_plane(float width, float height) {
+ex_mesh_t* ex_mesh_create_plane(float width, float height) {
 	width *= 0.5f;
 	height *= 0.5f;
 
 	struct ex_vertex {
-		ex_vec3 position;
-		ex_vec3 normal;
-		ex_vec2 texcoord;
+		ex_vec3_t position;
+		ex_vec3_t normal;
+		ex_vec2_t texcoord;
 	} vertices[] = {
 		{ { -width, 0.0f, -height }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f } },
-		{ { -width, 0.0f, height },  { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f } },
-		{ { width, 0.0f, height },   { 0.0f, 1.0f, 0.0f }, { 1.0f, 1.0f } },
-		{ { width, 0.0f, -height },  { 0.0f, 1.0f, 0.0f }, { 1.0f, 0.0f } }
+		{ { -width, 0.0f, height },  { 0.0f, 1.0f, 0.0f }, { 0.0f, 10.0f } },
+		{ { width, 0.0f, height },   { 0.0f, 1.0f, 0.0f }, { 10.0f, 10.0f } },
+		{ { width, 0.0f, -height },  { 0.0f, 1.0f, 0.0f }, { 10.0f, 0.0f } }
 	};
 
 	unsigned char indices[] = {
@@ -257,7 +264,7 @@ ex_mesh* ex_mesh_create_plane(float width, float height) {
 		2, 3, 0
 	};
 
-	ex_vertex_element elements[] = {
+	ex_vertex_element_t elements[] = {
 		EX_VERTEX(EX_VERTEX_POSITION, EX_VERTEX_FLOAT3),
 		EX_VERTEX(EX_VERTEX_NORMAL, EX_VERTEX_FLOAT3),
 		EX_VERTEX(EX_VERTEX_TEXCOORD, EX_VERTEX_FLOAT2),
@@ -267,15 +274,15 @@ ex_mesh* ex_mesh_create_plane(float width, float height) {
 	return ex_mesh_create(elements, vertices, 4, indices, 6, EX_INDEX_UINT8, EX_TOPOLOGY_TRIANGLES);
 }
 
-void ex_mesh_destroy(ex_mesh* mesh) {
+void ex_mesh_destroy(ex_mesh_t* mesh) {
 	glDeleteVertexArrays(1, &mesh->id);
 	glDeleteBuffers(2, mesh->buffers);
-	free(mesh->elements);
+	ex_free(mesh->elements);
 
-	free(mesh);
+	ex_free(mesh);
 }
 
-void ex_mesh_render(ex_mesh* mesh) {
+void ex_mesh_render(const ex_mesh_t* mesh) {
 	glBindVertexArray(mesh->id);
 
 	if (mesh->index_count > 0) {

@@ -24,16 +24,15 @@
 #include "gl/glew.h"
 #include "gl/wglew.h"
 
-struct ex_context {
+struct ex_context_t {
 	HWND hwnd;
 	HDC hdc;
 	HGLRC hglrc;
 };
 
-ex_context* ex_context_create(ex_window* window) {
-	ex_assert(window);
-
-	ex_context* context = (ex_context*)malloc(sizeof(ex_context));
+ex_context_t* ex_context_create(ex_window_t* window) {
+	ex_context_t* context = (ex_context_t*)ex_malloc(sizeof(ex_context_t));
+	int pixel;
 
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
@@ -54,14 +53,16 @@ ex_context* ex_context_create(ex_window* window) {
 		0, 0, 0
 	};
 
+	ex_assert(window);
+
 	context->hwnd = ex_window_get_handle(window);
 	ex_assert(context->hwnd);
 
 	context->hdc = GetDC(context->hwnd);
 	ex_assert(context->hdc);
 
-	int pixel = ChoosePixelFormat(context->hdc, &pfd);
-	SetPixelFormat(context->hdc, pixel, &pfd);
+	pixel = ChoosePixelFormat(context->hdc, &pfd);
+	ex_verify(SetPixelFormat(context->hdc, pixel, &pfd));
 
 	context->hglrc = wglCreateContext(context->hdc);
 	ex_assert(context->hglrc);
@@ -75,7 +76,7 @@ ex_context* ex_context_create(ex_window* window) {
 	return context;
 }
 
-int ex_context_interval(ex_context* context, int interval) {
+int ex_context_interval(ex_context_t* context, int interval) {
 	if (WGLEW_EXT_swap_control) {
 		int result = wglSwapIntervalEXT(interval);
 		if (!result && interval == EX_INTERVAL_ADAPTIVE_VSYNC) {
@@ -86,24 +87,24 @@ int ex_context_interval(ex_context* context, int interval) {
 	return 0;
 }
 
-int ex_context_swap(ex_context* context) {
+int ex_context_swap(ex_context_t* context) {
 	return SwapBuffers(context->hdc);
 }
 
-int ex_context_make_current(ex_context* context) {
+int ex_context_make_current(ex_context_t* context) {
 	return wglMakeCurrent(context->hdc, context->hglrc);
 }
 
-int ex_context_is_current(ex_context* context) {
+int ex_context_is_current(ex_context_t* context) {
 	return wglGetCurrentContext() == context->hglrc;
 }
 
-void ex_context_destroy(ex_context* context) {
+void ex_context_destroy(ex_context_t* context) {
 	ReleaseDC(context->hwnd, context->hdc);
 
 	wglDeleteContext(context->hglrc);
 
-	free(context);
+	ex_free(context);
 }
 
 #endif

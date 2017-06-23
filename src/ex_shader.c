@@ -26,12 +26,12 @@
 #define EX_SHADER_FRAGMENT (1 << 1)
 #define EX_SHADER_GEOMETRY (1 << 2)
 
-struct ex_shader {
+struct ex_shader_t {
 	unsigned int id;
 };
 
-ex_shader* ex_shader_compile(const char* code) {
-	ex_shader* shader;
+ex_shader_t* ex_shader_compile(const char* code) {
+	ex_shader_t* shader;
 	unsigned int id;
 	unsigned int code_size = strlen(code);
 
@@ -136,45 +136,45 @@ ex_shader* ex_shader_compile(const char* code) {
 	glDeleteShader(fragment);
 	glDeleteShader(geometry);
 
-	shader = (ex_shader*)malloc(sizeof(ex_shader));
+	shader = (ex_shader_t*)ex_malloc(sizeof(ex_shader_t));
 	shader->id = id;
 	return shader;
 }
 
-ex_shader* ex_shader_load(const char* file_name) {
+ex_shader_t* ex_shader_load(const char* file_name) {
 	FILE* file = fopen(file_name, "rb");
 	if (file) {
 		fseek(file, 0, SEEK_END);
 		unsigned int length = ftell(file);
 		fseek(file, 0, SEEK_SET);
 
-		char* buffer = (char*)malloc(length + 1);
+		char* buffer = (char*)ex_malloc(length + 1);
 		fread(buffer, 1, length, file);
 		buffer[length] = 0;
 
 		fclose(file);
 
-		ex_shader* shader = ex_shader_compile(buffer);
-		free(buffer);
+		ex_shader_t* shader = ex_shader_compile(buffer);
+		ex_free(buffer);
 		return shader;
 	}
 	return NULL;
 }
 
-void ex_shader_destroy(ex_shader* shader) {
+void ex_shader_destroy(ex_shader_t* shader) {
 	glDeleteProgram(shader->id);
 
-	free(shader);
+	ex_free(shader);
 }
 
-unsigned int ex_shader_get_id(ex_shader* shader) {
+unsigned int ex_shader_get_id(ex_shader_t* shader) {
 	return shader->id;
 }
 
-void ex_shader_use(ex_shader* shader) {
+void ex_shader_use(ex_shader_t* shader) {
 	glUseProgram(shader ? shader->id : 0);
 }
 
-int ex_shader_get_uniform(ex_shader* shader, const char* name) {
+int ex_shader_get_uniform(ex_shader_t* shader, const char* name) {
 	return glGetUniformLocation(shader->id, name);
 }

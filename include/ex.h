@@ -21,22 +21,35 @@ extern "C" {
 #endif
 
 #include "ex_compiler.h"
-#include "ex_debug.h"
 #include "ex_system.h"
+#include "ex_debug.h"
+#include "ex_memory.h"
+#include "ex_mutex.h"
+#include "ex_list.h"
+#include "ex_vector.h"
+#include "ex_time.h"
 #include "ex_math.h"
 #include "ex_vec2.h"
 #include "ex_vec3.h"
 #include "ex_vec4.h"
 #include "ex_mat4.h"
+#include "ex_config.h"
 #include "ex_texture.h"
 #include "ex_shader.h"
 #include "ex_material.h"
 #include "ex_mesh.h"
+#include "ex_node.h"
+#include "ex_scene.h"
+#include "ex_key.h"
 #include "ex_event.h"
 #include "ex_window.h"
 #include "ex_context.h"
 #include "ex_screen.h"
 #include "ex_renderer.h"
+
+EX_API int ex_init(void);
+
+EX_API void ex_release(void);
 
 #ifdef __cplusplus
 }

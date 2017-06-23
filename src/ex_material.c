@@ -17,25 +17,25 @@
 
 #include <stdlib.h>
 
-struct ex_material {
-	ex_vec3 diffuse;
+struct ex_material_t {
+	ex_vec3_t diffuse;
 	float roughness;
 	float metallic;
 
-	ex_texture* diffuse_map;
-	ex_texture* normal_map;
+	ex_texture_t* diffuse_map;
+	ex_texture_t* normal_map;
 
 	unsigned int flags;
 };
 
-ex_material* ex_material_create(ex_material* copy) {
-	ex_material* material = (ex_material*)malloc(sizeof(ex_material));
+ex_material_t* ex_material_create(ex_material_t* copy) {
+	ex_material_t* material = (ex_material_t*)ex_malloc(sizeof(ex_material_t));
 	if (copy) {
 		*material = *copy;
 	} else {
 		ex_vec3_assign(&material->diffuse, 1.0f, 1.0f, 1.0f);
-		material->roughness = 1.0f;
-		material->metallic = 0.0f;
+		material->roughness = 0.8f;
+		material->metallic = 0.2f;
 		
 		material->diffuse_map = NULL;
 		material->normal_map = NULL;
@@ -45,58 +45,58 @@ ex_material* ex_material_create(ex_material* copy) {
 	return material;
 }
 
-void ex_material_destroy(ex_material* material) {
-	free(material);
+void ex_material_destroy(ex_material_t* material) {
+	ex_free(material);
 }
 
-void ex_material_set_diffuse(ex_material* material, float r, float g, float b) {
+void ex_material_set_diffuse(ex_material_t* material, float r, float g, float b) {
 	ex_vec3_assign(&material->diffuse, r, g, b);
 }
 
-void ex_material_get_diffuse(ex_material* material, ex_vec3* diffuse) {
+void ex_material_get_diffuse(const ex_material_t* material, ex_vec3_t* diffuse) {
 	*diffuse = material->diffuse;
 }
 
-void ex_material_set_roughness(ex_material* material, float roughness) {
+void ex_material_set_roughness(ex_material_t* material, float roughness) {
 	material->roughness = material->roughness;
 }
 
-float ex_material_get_roughness(ex_material* material) {
+float ex_material_get_roughness(const ex_material_t* material) {
 	return material->roughness;
 }
 
-void ex_material_set_metallic(ex_material* material, float metallic) {
+void ex_material_set_metallic(ex_material_t* material, float metallic) {
 	material->metallic = metallic;
 }
 
-float ex_material_get_metallic(ex_material* material) {
+float ex_material_get_metallic(const ex_material_t* material) {
 	return material->metallic;
 }
 
-void ex_material_set_diffuse_map(ex_material* material, ex_texture* diffuse_map) {
+void ex_material_set_diffuse_map(ex_material_t* material, ex_texture_t* diffuse_map) {
 	material->diffuse_map = diffuse_map;
 }
 
-ex_texture* ex_material_get_diffuse_map(ex_material* material) {
+ex_texture_t* ex_material_get_diffuse_map(const ex_material_t* material) {
 	return material->diffuse_map;
 }
 
-void ex_material_set_normal_map(ex_material* material, ex_texture* normal_map) {
+void ex_material_set_normal_map(ex_material_t* material, ex_texture_t* normal_map) {
 	material->normal_map = normal_map; 
 }
 
-ex_texture* ex_material_get_normal_map(ex_material* material) {
+ex_texture_t* ex_material_get_normal_map(const ex_material_t* material) {
 	return material->normal_map;
 }
 
-void ex_material_remove_properties(ex_material* material, unsigned int flags) {
+void ex_material_remove_properties(ex_material_t* material, unsigned int flags) {
 	material->flags &= ~flags;
 }
 
-void ex_material_add_properties(ex_material* material, unsigned int flags) {
+void ex_material_add_properties(ex_material_t* material, unsigned int flags) {
 	material->flags |= flags;
 }
 
-unsigned int ex_material_get_properties(ex_material* material) {
+unsigned int ex_material_get_properties(const ex_material_t* material) {
 	return material->flags;
 }

@@ -34,7 +34,7 @@ void main() {
 	
     float specular = light.a;
 	
-	out_color = vec4(diffuse_color * diffuse_light, 1.0f);// + max(0.0f, specular), 1.0f);
+	out_color = vec4(diffuse_color * diffuse_light + max(0.0f, specular), 1.0f);
 }
 
 #endif

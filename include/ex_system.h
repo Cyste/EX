@@ -22,6 +22,16 @@
 #	define EX_OS_UNIX
 #endif
 
-const char* ex_system_get_name(void);
+#ifdef EX_DLL
+#	ifdef EX_BUILDING_LIB
+#		define EX_API __declspec( dllexport )
+#	else
+#		define EX_API __declspec( dllimport )
+#	endif 
+#else 
+#	define EX_API extern
+#endif 
+
+EX_API const char* ex_system_get_name(void);
 
 #endif

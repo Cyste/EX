@@ -13,25 +13,22 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-#ifndef EX_CONTEXT_H_
-#define EX_CONTEXT_H_
+#include <ex.h>
 
-#define EX_INTERVAL_NONE           (0)
-#define EX_INTERVAL_VSYNC          (1)
-#define EX_INTERVAL_ADAPTIVE_VSYNC (-1)
+#include <stdlib.h>
 
-typedef struct ex_context_t ex_context_t;
+void* ex_malloc(unsigned int size) {
+	return malloc(size);
+}
 
-EX_API ex_context_t* ex_context_create(ex_window_t* window);
+void* ex_realloc(void* data, unsigned int size) {
+	return realloc(data, size);
+}
 
-EX_API int ex_context_interval(ex_context_t* context, int interval);
+void* ex_calloc(unsigned num, unsigned size) {
+	return calloc(num, size);
+}
 
-EX_API int ex_context_swap(ex_context_t* context);
-
-EX_API int ex_context_make_current(ex_context_t* context);
-
-EX_API int ex_context_is_current(ex_context_t* context);
-
-EX_API void ex_context_destroy(ex_context_t* context);
-
-#endif
+void ex_free(void* data) {
+	free(data);
+}

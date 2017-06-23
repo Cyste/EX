@@ -16,32 +16,32 @@
 #ifndef EX_MATRIX4_H_
 #define EX_MATRIX4_H_
 
-typedef struct ex_mat4 {
+typedef struct ex_mat4_t {
 	float m[16];
-} ex_mat4;
+} ex_mat4_t;
 
-void ex_mat4_identity(ex_mat4* mat);
+EX_API void ex_mat4_identity(ex_mat4_t* mat);
 
-void ex_mat4_scaling(ex_mat4* out, float x, float y, float z);
+EX_API void ex_mat4_scaling(ex_mat4_t* out, float x, float y, float z);
 
-void ex_mat4_rotation_x(ex_mat4* out, float angle);
+EX_API void ex_mat4_rotation_x(ex_mat4_t* out, float angle);
 
-void ex_mat4_rotation_y(ex_mat4* out, float angle);
+EX_API void ex_mat4_rotation_y(ex_mat4_t* out, float angle);
 
-void ex_mat4_rotation_z(ex_mat4* out, float angle);
+EX_API void ex_mat4_rotation_z(ex_mat4_t* out, float angle);
 
-void ex_mat4_translation(ex_mat4* out, float x, float y, float z);
+EX_API void ex_mat4_translation(ex_mat4_t* out, float x, float y, float z);
 
-void ex_mat4_perspective(ex_mat4* out, float fovY, float aspect, float minZ, float maxZ);
+EX_API void ex_mat4_perspective(ex_mat4_t* out, float fovY, float aspect, float minZ, float maxZ);
 
-void ex_mat4_multiply(ex_mat4* out, ex_mat4* a, ex_mat4* b);
+EX_API void ex_mat4_multiply(ex_mat4_t* out, const ex_mat4_t* a, const ex_mat4_t* b);
 
-void ex_mat4_multiply_vec4(ex_vec4* out, ex_mat4* a, ex_vec4* b);
+EX_API void ex_mat4_multiply_vec4(ex_vec4_t* out, const ex_mat4_t* a, const ex_vec4_t* b);
 
-void ex_mat4_transpose(ex_mat4* out, ex_mat4* mat);
+EX_API void ex_mat4_transpose(ex_mat4_t* out, const ex_mat4_t* mat);
 
-void ex_mat4_inverse(ex_mat4* out, ex_mat4* mat);
+EX_API void ex_mat4_inverse(ex_mat4_t* out, const ex_mat4_t* mat);
 
-void ex_mat4_extract_position(ex_vec3* out, ex_mat4* mat);
+EX_API void ex_mat4_extract_position(ex_vec3_t* out, const ex_mat4_t* mat);
 
 #endif

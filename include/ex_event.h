@@ -16,10 +16,27 @@
 #ifndef EX_EVENT_H_
 #define EX_EVENT_H_
 
-#define EX_EVENT_CLOSE 0
+#define EX_EVENT_CLOSE    0
+#define EX_EVENT_RESIZE   1
+#define EX_EVENT_KEY_DOWN 2
+#define EX_EVENT_KEY_UP   3
 
-typedef struct ex_event {
+typedef struct ex_resize_event_t {
+	int width;
+	int height;
+} ex_resize_event_t;
+
+typedef struct ex_key_event_t {
+	int key;
+} ex_key_event_t;
+
+typedef struct ex_event_t {
 	int type;
-} ex_event;
+
+	union {
+		ex_resize_event_t resize;
+		ex_key_event_t key;
+	};
+} ex_event_t;
 
 #endif

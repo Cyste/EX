@@ -13,25 +13,35 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-#ifndef EX_CONTEXT_H_
-#define EX_CONTEXT_H_
+#include <ex.h>
 
-#define EX_INTERVAL_NONE           (0)
-#define EX_INTERVAL_VSYNC          (1)
-#define EX_INTERVAL_ADAPTIVE_VSYNC (-1)
+#ifdef EX_OS_WINDOWS
 
-typedef struct ex_context_t ex_context_t;
+#include <Windows.h>
 
-EX_API ex_context_t* ex_context_create(ex_window_t* window);
+struct ex_mutex_t {
+	CRITICAL_SECTION section;
+};
 
-EX_API int ex_context_interval(ex_context_t* context, int interval);
+ex_mutex_t* ex_mutex_create(void) {
+	ex_mutex_t* mutex = ex_malloc(sizeof(ex_mutex_t));
 
-EX_API int ex_context_swap(ex_context_t* context);
+	InitializeCriticalSection(&mutex->section);
 
-EX_API int ex_context_make_current(ex_context_t* context);
+	return mutex;
+}
 
-EX_API int ex_context_is_current(ex_context_t* context);
+void ex_mutex_destroy(ex_mutex_t* mutex) {
+	DeleteCriticalSection(&mutex->section);
+	ex_free(mutex);
+}
 
-EX_API void ex_context_destroy(ex_context_t* context);
+void ex_mutex_lock(ex_mutex_t* mutex) {
+	EnterCriticalSection(&mutex->section);
+}
+
+void ex_mutex_unlock(ex_mutex_t* mutex) {
+	LeaveCriticalSection(&mutex->section);
+}
 
 #endif

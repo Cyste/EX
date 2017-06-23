@@ -47,11 +47,10 @@ out vec4 color;
 
 void main()
 {
-    vec4 screen_pos = var_screen_position;
-	screen_pos.xy /= screen_pos.w;
+    vec4 screen_pos = var_screen_position;	
+	screen_pos.xyz /= screen_pos.w;
 	
 	vec2 texcoord = vec2(screen_pos.x, screen_pos.y) * 0.5 + 0.5;
-	//texcoord.y = 1.0 - texcoord.y;
 	
 	vec4 normal_data = texture(normal_map, texcoord);
 	
@@ -79,12 +78,9 @@ void main()
 	
 	vec3 light_vector = light_pos - pos.xyz;
 	
-	//float len = length(lightVector) / lightRadius;
-	
 	float attenuation = clamp(1.0f - length(light_vector) / light_radius, 0.0f, 1.0f); 
 	
 	attenuation = 1.0 - cos(attenuation * PI * 0.5);
-	// float shadow = texture(shadowMap, -normalize(lightVector)).r;
 	
 	float s = 1.0f;
 	

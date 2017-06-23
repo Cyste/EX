@@ -16,41 +16,41 @@
 #ifndef EX_VECTOR2_H_
 #define EX_VECTOR2_H_
 
-typedef struct ex_vec2 {
+typedef struct ex_vec2_t {
 	float x;
 	float y;
-} ex_vec2;
+} ex_vec2_t;
 
-void ex_vec2_assign(ex_vec2* out, float x, float y);
+EX_API void ex_vec2_assign(ex_vec2_t* out, float x, float y);
 
-void ex_vec2_neg(ex_vec2* out, ex_vec2* v);
+EX_API void ex_vec2_neg(ex_vec2_t* out, ex_vec2_t* v);
 
-void ex_vec2_add(ex_vec2* out, ex_vec2* a, ex_vec2* b);
+EX_API void ex_vec2_add(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b);
 
-void ex_vec2_subtract(ex_vec2* out, ex_vec2* a, ex_vec2* b);
+EX_API void ex_vec2_subtract(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b);
 
-void ex_vec2_multiply(ex_vec2* out, ex_vec2* a, ex_vec2* b);
+EX_API void ex_vec2_multiply(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b);
 
-void ex_vec2_divide(ex_vec2* out, ex_vec2* a, ex_vec2* b);
+EX_API void ex_vec2_divide(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b);
 
-void ex_vec2_add_scalar(ex_vec2* out, ex_vec2* a, float b);
+EX_API void ex_vec2_add_scalar(ex_vec2_t* out, ex_vec2_t* a, float b);
 
-void ex_vec2_subtract_scalar(ex_vec2* out, ex_vec2* a, float b);
+EX_API void ex_vec2_subtract_scalar(ex_vec2_t* out, ex_vec2_t* a, float b);
 
-void ex_vec2_multiply_scalar(ex_vec2* out, ex_vec2* a, float b);
+EX_API void ex_vec2_multiply_scalar(ex_vec2_t* out, ex_vec2_t* a, float b);
 
-void ex_vec2_divide_scalar(ex_vec2* out, ex_vec2* a, float b);
+EX_API void ex_vec2_divide_scalar(ex_vec2_t* out, ex_vec2_t* a, float b);
 
-float ex_vec2_length(ex_vec2* v);
+EX_API float ex_vec2_length(ex_vec2_t* v);
 
-void ex_vec2_normalize(ex_vec2* out, ex_vec2* v);
+EX_API void ex_vec2_normalize(ex_vec2_t* out, ex_vec2_t* v);
 
-void ex_vec2_direction(ex_vec2* out, ex_vec2* a, ex_vec2* b);
+EX_API void ex_vec2_direction(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b);
 
-float ex_vec2_distance(ex_vec2* a, ex_vec2* b);
+EX_API float ex_vec2_distance(ex_vec2_t* a, ex_vec2_t* b);
 
-float ex_vec2_dot(ex_vec2* a, ex_vec2* b);
+EX_API float ex_vec2_dot(ex_vec2_t* a, ex_vec2_t* b);
 
-float ex_vec2_cross(ex_vec2* a, ex_vec2* b);
+EX_API float ex_vec2_cross(ex_vec2_t* a, ex_vec2_t* b);
 
 #endif

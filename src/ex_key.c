@@ -13,25 +13,24 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 */
-#ifndef EX_CONTEXT_H_
-#define EX_CONTEXT_H_
+#include <ex.h>
 
-#define EX_INTERVAL_NONE           (0)
-#define EX_INTERVAL_VSYNC          (1)
-#define EX_INTERVAL_ADAPTIVE_VSYNC (-1)
+#include <string.h>
 
-typedef struct ex_context_t ex_context_t;
+static char keys[EX_KEY_COUNT];
 
-EX_API ex_context_t* ex_context_create(ex_window_t* window);
+void ex_keyboard_init(void) {
+	memset(keys, 0, sizeof(keys));
+}
 
-EX_API int ex_context_interval(ex_context_t* context, int interval);
+int ex_keyboard_get_state(int key) {
+	ex_assert(key >= 0 && key < EX_KEY_COUNT);
 
-EX_API int ex_context_swap(ex_context_t* context);
+	return keys[key];
+}
 
-EX_API int ex_context_make_current(ex_context_t* context);
+void ex_keyboard_set_state(int key, int state) {
+	ex_assert(key >= 0 && key < EX_KEY_COUNT);
 
-EX_API int ex_context_is_current(ex_context_t* context);
-
-EX_API void ex_context_destroy(ex_context_t* context);
-
-#endif
+	keys[key] = (char)state;
+}

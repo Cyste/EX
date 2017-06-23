@@ -17,82 +17,82 @@
 
 #include <math.h>
 
-void ex_vec2_assign(ex_vec2* out, float x, float y) {
+void ex_vec2_assign(ex_vec2_t* out, float x, float y) {
 	out->x = x;
 	out->y = y;
 }
 
-void ex_vec2_neg(ex_vec2* out, ex_vec2* v) {
+void ex_vec2_neg(ex_vec2_t* out, ex_vec2_t* v) {
 	out->x = -v->x;
 	out->y = -v->y;
 }
 
-void ex_vec2_add(ex_vec2* out, ex_vec2* a, ex_vec2* b) {
+void ex_vec2_add(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b) {
 	out->x = a->x + b->x;
 	out->y = a->y + b->y;
 }
 
-void ex_vec2_subtract(ex_vec2* out, ex_vec2* a, ex_vec2* b) {
+void ex_vec2_subtract(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b) {
 	out->x = a->x - b->x;
 	out->y = a->y - b->y;
 }
 
-void ex_vec2_multiply(ex_vec2* out, ex_vec2* a, ex_vec2* b) {
+void ex_vec2_multiply(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b) {
 	out->x = a->x * b->x;
 	out->y = a->y * b->y;
 }
 
-void ex_vec2_divide(ex_vec2* out, ex_vec2* a, ex_vec2* b) {
+void ex_vec2_divide(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b) {
 	out->x = a->x / b->x;
 	out->y = a->y / b->y;
 }
 
-void ex_vec2_add_scalar(ex_vec2* out, ex_vec2* a, float b) {
+void ex_vec2_add_scalar(ex_vec2_t* out, ex_vec2_t* a, float b) {
 	out->x = a->x + b;
 	out->y = a->y + b;
 }
 
-void ex_vec2_subtract_scalar(ex_vec2* out, ex_vec2* a, float b) {
+void ex_vec2_subtract_scalar(ex_vec2_t* out, ex_vec2_t* a, float b) {
 	out->x = a->x - b;
 	out->y = a->y - b;
 }
 
-void ex_vec2_multiply_scalar(ex_vec2* out, ex_vec2* a, float b) {
+void ex_vec2_multiply_scalar(ex_vec2_t* out, ex_vec2_t* a, float b) {
 	out->x = a->x * b;
 	out->y = a->y * b;
 }
 
-void ex_vec2_divide_scalar(ex_vec2* out, ex_vec2* a, float b) {
+void ex_vec2_divide_scalar(ex_vec2_t* out, ex_vec2_t* a, float b) {
 	out->x = a->x / b;
 	out->y = a->y / b;
 }
 
-float ex_vec2_length(ex_vec2* v) {
+float ex_vec2_length(ex_vec2_t* v) {
 	return (float)sqrt(v->x * v->x + v->y * v->y);
 }
 
-void ex_vec2_normalize(ex_vec2* out, ex_vec2* v) {
+void ex_vec2_normalize(ex_vec2_t* out, ex_vec2_t* v) {
 	float length = (float)1.0 / ex_vec2_length(v);
 
 	out->x = v->x * length;
 	out->y = v->y * length;
 }
 
-void ex_vec2_direction(ex_vec2* out, ex_vec2* a, ex_vec2* b) {
+void ex_vec2_direction(ex_vec2_t* out, ex_vec2_t* a, ex_vec2_t* b) {
 	ex_vec2_subtract(out, b, a);
 	ex_vec2_normalize(out, out);
 }
 
-float ex_vec2_distance(ex_vec2* a, ex_vec2* b) {
-	ex_vec2 out;
+float ex_vec2_distance(ex_vec2_t* a, ex_vec2_t* b) {
+	ex_vec2_t out;
 	ex_vec2_subtract(&out, b, a);
 	return ex_vec2_length(&out);
 }
 
-float ex_vec2_dot(ex_vec2* a, ex_vec2* b) {
+float ex_vec2_dot(ex_vec2_t* a, ex_vec2_t* b) {
 	return a->x * b->x + a->y * b->y;
 }
 
-float ex_vec2_cross(ex_vec2* a, ex_vec2* b) {
+float ex_vec2_cross(ex_vec2_t* a, ex_vec2_t* b) {
 	return a->x * b->y - a->y * b->x;
 }

@@ -16,18 +16,18 @@
 #ifndef EX_SHADER_H_
 #define EX_SHADER_H_
 
-typedef struct ex_shader ex_shader;
+typedef struct ex_shader_t ex_shader_t;
 
-ex_shader* ex_shader_compile(const char* code);
+EX_API ex_shader_t* ex_shader_compile(const char* code);
 
-ex_shader* ex_shader_load(const char* file_name);
+EX_API ex_shader_t* ex_shader_load(const char* file_name);
 
-void ex_shader_destroy(ex_shader* shader);
+EX_API void ex_shader_destroy(ex_shader_t* shader);
 
-unsigned int ex_shader_get_id(ex_shader* shader);
+EX_API unsigned int ex_shader_get_id(ex_shader_t* shader);
 
-void ex_shader_use(ex_shader* shader);
+EX_API void ex_shader_use(ex_shader_t* shader);
 
-int ex_shader_get_uniform(ex_shader* shader, const char* name);
+EX_API int ex_shader_get_uniform(ex_shader_t* shader, const char* name);
 
 #endif

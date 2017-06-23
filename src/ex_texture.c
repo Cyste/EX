@@ -23,7 +23,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-struct ex_texture {
+struct ex_texture_t {
 	unsigned int id;
 	int width;
 	int height;
@@ -31,11 +31,11 @@ struct ex_texture {
 };
 
 static GLint _internalformats[4] = { GL_R8, GL_RG8, GL_RGB8, GL_RGBA8 };
-static GLenum _formats[4] = { GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RG, GL_RGB };
+static GLenum _formats[4] = { GL_LUMINANCE, GL_LUMINANCE_ALPHA, GL_RGB, GL_RGBA };
 
-ex_texture* ex_texture_create(void* data, int width, int height, int components) {
+ex_texture_t* ex_texture_create(void* data, int width, int height, int components) {
 	ex_assert(components >= 1 && components <= 4);
-	ex_texture* texture = (ex_texture*)malloc(sizeof(ex_texture));
+	ex_texture_t* texture = (ex_texture_t*)ex_malloc(sizeof(ex_texture_t));
 
 	texture->width = width;
 	texture->height = height;
@@ -44,41 +44,45 @@ ex_texture* ex_texture_create(void* data, int width, int height, int components)
 	glGenTextures(1, &texture->id);
 	glBindTexture(GL_TEXTURE_2D, texture->id);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, _internalformats[components], width, height, 0, _formats[components], GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, _internalformats[components - 1], width, height, 0, _formats[components - 1], GL_UNSIGNED_BYTE, data);
+
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return texture;
 }
 
-ex_texture* ex_texture_load(const char* file_name) {
-	ex_texture* texture;
+ex_texture_t* ex_texture_load(const char* file_name) {
+	ex_texture_t* texture;
 	stbi_uc* data;
 	int width, height, components;
 
 	data = stbi_load(file_name, &width, &height, &components, 4);
-	if (!data) {
-		return NULL;
-	}
+	ex_assert(data);
 
 	texture = ex_texture_create(data, width, height, 4);
 	stbi_image_free(data);
 	return texture;
 }
 
-void ex_texture_destroy(ex_texture* texture) {
+void ex_texture_destroy(ex_texture_t* texture) {
 	glDeleteTextures(1, &texture->id);
-	free(texture);
+	ex_free(texture);
 }
 
-void ex_texture_generate_mipmaps(ex_texture* texture) {
+void ex_texture_generate_mipmaps(ex_texture_t* texture) {
 	if (!texture->mipmaps) {
 		glBindTexture(GL_TEXTURE_2D, texture->id);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
+
+		float aniso = 0.0f;
+		glBindTexture(GL_TEXTURE_2D, texture->id);
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		texture->mipmaps = 1;
@@ -86,14 +90,14 @@ void ex_texture_generate_mipmaps(ex_texture* texture) {
 }
 
 
-unsigned int ex_texture_get_id(ex_texture* texture) {
+unsigned int ex_texture_get_id(ex_texture_t* texture) {
 	return texture->id;
 }
 
-int ex_texture_get_width(ex_texture* texture) {
+int ex_texture_get_width(ex_texture_t* texture) {
 	return texture->width;
 }
 
-int ex_texture_get_height(ex_texture* texture) {
+int ex_texture_get_height(ex_texture_t* texture) {
 	return texture->height;
 }

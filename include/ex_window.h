@@ -24,25 +24,27 @@
 #define EX_WINDOW_DEFAULT    (EX_WINDOW_VISIBLE | EX_WINDOW_CLOSE | EX_WINDOW_TITLEBAR)
 
 #ifdef EX_OS_WINDOWS
-	typedef struct HWND__* ex_window_handle;
+	typedef struct HWND__* ex_window_handle_t;
 #elif defined(EX_OS_UNIX)
-	typedef unsigned long ex_window_handle;
+	typedef unsigned long ex_window_handle_t;
 #endif
 
-typedef struct ex_window ex_window;
+typedef struct ex_window_t ex_window_t;
 
-ex_window* ex_window_create(const char* title, int width, int height, unsigned int flags);
+EX_API ex_window_t* ex_window_create(const char* title, int width, int height, unsigned int flags);
 
-void ex_window_destroy(ex_window* window);
+EX_API void ex_window_destroy(ex_window_t* window);
 
-int ex_window_poll_events(ex_window* window, ex_event* event);
+EX_API int ex_window_poll_events(ex_window_t* window, ex_event_t* event);
 
-void ex_window_push_event(ex_window* window, ex_event* event);
+EX_API void ex_window_push_event(ex_window_t* window, ex_event_t* event);
 
-ex_window_handle ex_window_get_handle(ex_window* window);
+EX_API ex_window_handle_t ex_window_get_handle(ex_window_t* window);
 
-void ex_window_set_visible(ex_window* window, int visible);
+EX_API void ex_window_set_visible(ex_window_t* window, int visible);
 
-int ex_window_is_visible(ex_window* window);
+EX_API int ex_window_is_visible(ex_window_t* window);
+
+EX_API void ex_window_get_size(ex_window_t* window, int* width, int* height);
 
 #endif
